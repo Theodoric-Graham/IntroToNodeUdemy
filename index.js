@@ -1,6 +1,7 @@
 // node.js is built around this concept of modules,
 const fs = require("fs");
 const http = require("http");
+const url = require("url");
 
 ///////////////////////////////
 //FILES
@@ -32,9 +33,26 @@ const http = require("http");
 ///////////////////////////////
 //SERVER
 const server = http.createServer((req, res) => {
+  console.log(req.url);
+
+  const pathName = req.url;
+
+  if (pathName === "/" || pathName === "/overview") {
+    res.end("This is the OVERVIEW");
+  } else if (pathName === "/product") {
+    res.end("This is the PRODUCT");
+  } else {
+    // a http header is a piece of info about the response we are sending back
+    // the header and the status code always need to be set before we send out the response
+    res.writeHead(404, {
+      "Content-type": "text/html",
+      "my-own-header": "hello-world",
+    });
+    res.end("<h1>Page not found</h1>");
+  }
   //each time a new request hits the server, it will call the function
   //simple way of sending back a simple response
-  res.end("Hello from the server!");
+  // res.end("Hello from the server!");
 });
 
 //standard ip address for a local host
