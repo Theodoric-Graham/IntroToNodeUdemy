@@ -32,6 +32,11 @@ const url = require("url");
 
 ///////////////////////////////
 //SERVER
+
+//Top Level Code, it is blocking, but only runs once at the start
+const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
+const dataObj = JSON.parse(data);
+
 const server = http.createServer((req, res) => {
   console.log(req.url);
 
@@ -41,6 +46,10 @@ const server = http.createServer((req, res) => {
     res.end("This is the OVERVIEW");
   } else if (pathName === "/product") {
     res.end("This is the PRODUCT");
+  } else if (pathName === "/api") {
+    res.writeHead(200, { "Content-type": "application/json" });
+    // console.log(productData);
+    res.end(data);
   } else {
     // a http header is a piece of info about the response we are sending back
     // the header and the status code always need to be set before we send out the response
