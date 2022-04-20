@@ -66,12 +66,12 @@ const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
 const dataObj = JSON.parse(data);
 
 const server = http.createServer((req, res) => {
-  console.log(req.url);
-
-  const pathName = req.url;
+  // console.log(req.url);
+  // parsing the variables out of the url, needs to be true to parse the query into an object
+  const { query, pathname } = url.parse(req.url, true);
 
   // Overview Page
-  if (pathName === "/" || pathName === "/overview") {
+  if (pathname === "/" || pathname === "/overview") {
     res.writeHead(200, { "Content-type": "text/html" });
     //loop over dataObj, each iteration we replace the placeholder in the template card with the current product
     const cardsHtml = dataObj
@@ -82,11 +82,16 @@ const server = http.createServer((req, res) => {
     res.end(output);
 
     //Product Page
-  } else if (pathName === "/product") {
-    res.end("This is the PRODUCT");
+  } else if (pathname === "/product") {
+    res.writeHead(200, { "Content-type": "text/html" });
+
+    const product = dataObj[query.id];
+    const output = replaceTemplate(tempProduct, product);
+    // console.log(query);
+    res.end(output);
 
     //API
-  } else if (pathName === "/api") {
+  } else if (pathname === "/api") {
     res.writeHead(200, { "Content-type": "application/json" });
     // console.log(productData);
     res.end(data);
