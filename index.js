@@ -2,7 +2,8 @@
 const fs = require("fs");
 const http = require("http");
 const url = require("url");
-
+//a slug is the last part of the url that contains a unique string
+const slugify = require("slugify");
 const replaceTemplate = require("./modules/replaceTemplate");
 
 ///////////////////////////////
@@ -51,10 +52,16 @@ const tempProduct = fs.readFileSync(
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
 const dataObj = JSON.parse(data);
 
+// console.log(slugify("Fresh Avocados", { lower: true }));
+const slugs = dataObj.map((el) => slugify(el.productName, { lower: true }));
+console.log(slugs);
+
 const server = http.createServer((req, res) => {
-  // console.log(req.url);
+  console.log(req.url);
   // parsing the variables out of the url, needs to be true to parse the query into an object
   const { query, pathname } = url.parse(req.url, true);
+
+  console.log(query);
 
   // Overview Page
   if (pathname === "/" || pathname === "/overview") {
@@ -73,7 +80,8 @@ const server = http.createServer((req, res) => {
 
     const product = dataObj[query.id];
     const output = replaceTemplate(tempProduct, product);
-    // console.log(query);
+
+    console.log(query);
     res.end(output);
 
     //API
