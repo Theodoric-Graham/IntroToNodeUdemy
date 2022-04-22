@@ -53,6 +53,8 @@ const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
 const dataObj = JSON.parse(data);
 
 // console.log(slugify("Fresh Avocados", { lower: true }));
+
+//Adding slug property to data
 dataObj.map((el) => (el["slug"] = slugify(el.productName, { lower: true })));
 
 const server = http.createServer((req, res) => {
@@ -76,9 +78,10 @@ const server = http.createServer((req, res) => {
   } else if (pathname.includes("/product")) {
     res.writeHead(200, { "Content-type": "text/html" });
     const slug = pathname.replace("/product/", "");
-    const product = dataObj.filter((element) => {
+    console.log(slug);
+    const product = dataObj.find((element) => {
       return element.slug === slug;
-    })[0];
+    });
     const output = replaceTemplate(tempProduct, product);
     res.end(output);
 
