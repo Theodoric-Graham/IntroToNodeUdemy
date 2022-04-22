@@ -53,15 +53,13 @@ const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
 const dataObj = JSON.parse(data);
 
 // console.log(slugify("Fresh Avocados", { lower: true }));
-const slugs = dataObj.map((el) => slugify(el.productName, { lower: true }));
-console.log(slugs);
+dataObj.map((el) => (el["slug"] = slugify(el.productName, { lower: true })));
 
 const server = http.createServer((req, res) => {
-  console.log(req.url);
   // parsing the variables out of the url, needs to be true to parse the query into an object
-  const { query, pathname } = url.parse(req.url, true);
+  const pathname = req.url;
 
-  console.log(query);
+  console.log(pathname);
 
   // Overview Page
   if (pathname === "/" || pathname === "/overview") {
@@ -75,13 +73,13 @@ const server = http.createServer((req, res) => {
     res.end(output);
 
     //Product Page
-  } else if (pathname === "/product") {
+  } else if (pathname.includes("/product")) {
     res.writeHead(200, { "Content-type": "text/html" });
-
-    const product = dataObj[query.id];
+    const slug = pathname.replace("/product/", "");
+    const product = dataObj.filter((element) => {
+      return element.slug === slug;
+    })[0];
     const output = replaceTemplate(tempProduct, product);
-
-    console.log(query);
     res.end(output);
 
     //API
