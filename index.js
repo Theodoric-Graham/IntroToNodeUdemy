@@ -1,10 +1,10 @@
 // node.js is built around this concept of modules,
-const fs = require("fs");
-const http = require("http");
-const url = require("url");
+const fs = require('fs');
+const http = require('http');
+const url = require('url');
 //a slug is the last part of the url that contains a unique string
-const slugify = require("slugify");
-const replaceTemplate = require("./modules/replaceTemplate");
+const slugify = require('slugify');
+const replaceTemplate = require('./modules/replaceTemplate');
 
 ///////////////////////////////
 //FILES
@@ -39,23 +39,23 @@ const replaceTemplate = require("./modules/replaceTemplate");
 //Top Level Code, it is blocking, but only runs once at the start
 const tempOverview = fs.readFileSync(
   `${__dirname}/templates/template-overview.html`,
-  "utf-8"
+  'utf-8'
 );
 const tempCard = fs.readFileSync(
   `${__dirname}/templates/template-card.html`,
-  "utf-8"
+  'utf-8'
 );
 const tempProduct = fs.readFileSync(
   `${__dirname}/templates/template-product.html`,
-  "utf-8"
+  'utf-8'
 );
-const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
+const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, 'utf-8');
 const dataObj = JSON.parse(data);
 
 // console.log(slugify("Fresh Avocados", { lower: true }));
 
 //Adding slug property to data
-dataObj.map((el) => (el["slug"] = slugify(el.productName, { lower: true })));
+dataObj.map((el) => (el['slug'] = slugify(el.productName, { lower: true })));
 
 const server = http.createServer((req, res) => {
   // parsing the variables out of the url, needs to be true to parse the query into an object
@@ -64,20 +64,20 @@ const server = http.createServer((req, res) => {
   console.log(pathname);
 
   // Overview Page
-  if (pathname === "/" || pathname === "/overview") {
-    res.writeHead(200, { "Content-type": "text/html" });
+  if (pathname === '/' || pathname === '/overview') {
+    res.writeHead(200, { 'Content-type': 'text/html' });
     //loop over dataObj, each iteration we replace the placeholder in the template card with the current product
     const cardsHtml = dataObj
       .map((el) => replaceTemplate(tempCard, el))
-      .join("");
+      .join('');
     // console.log(cardsHtml);
-    const output = tempOverview.replace("{%PRODUCT_CARDS%}", cardsHtml);
+    const output = tempOverview.replace('{%PRODUCT_CARDS%}', cardsHtml);
     res.end(output);
 
     //Product Page
-  } else if (pathname.includes("/product")) {
-    res.writeHead(200, { "Content-type": "text/html" });
-    const slug = pathname.replace("/product/", "");
+  } else if (pathname.includes('/product')) {
+    res.writeHead(200, { 'Content-type': 'text/html' });
+    const slug = pathname.replace('/product/', '');
     console.log(slug);
     const product = dataObj.find((element) => {
       return element.slug === slug;
@@ -86,8 +86,8 @@ const server = http.createServer((req, res) => {
     res.end(output);
 
     //API
-  } else if (pathname === "/api") {
-    res.writeHead(200, { "Content-type": "application/json" });
+  } else if (pathname === '/api') {
+    res.writeHead(200, { 'Content-type': 'application/json' });
     // console.log(productData);
     res.end(data);
 
@@ -96,10 +96,10 @@ const server = http.createServer((req, res) => {
     // a http header is a piece of info about the response we are sending back
     // the header and the status code always need to be set before we send out the response
     res.writeHead(404, {
-      "Content-type": "text/html",
-      "my-own-header": "hello-world",
+      'Content-type': 'text/html',
+      'my-own-header': 'hello-world',
     });
-    res.end("<h1>Page not found</h1>");
+    res.end('<h1>Page not found</h1>');
   }
   //each time a new request hits the server, it will call the function
   //simple way of sending back a simple response
@@ -108,6 +108,6 @@ const server = http.createServer((req, res) => {
 
 //standard ip address for a local host
 //starts listening for incoming request, starting the server
-server.listen(8000, "127.0.0.1", () => {
-  console.log("Listening to request on port 8000");
+server.listen(8000, '127.0.0.1', () => {
+  console.log('Listening to request on port 8000');
 });
